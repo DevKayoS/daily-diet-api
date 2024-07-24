@@ -1,1 +1,8 @@
+# Dependencies
 node_modules
+
+# database
+/db/*.db
+
+# enviroment
+.env

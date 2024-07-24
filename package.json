@@ -13,6 +13,7 @@
   "description": "",
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.12",
     "@types/supertest": "^6.0.2",
     "eslint": "^8.57.0",
@@ -23,6 +24,8 @@
     "vitest": "^2.0.4"
   },
   "dependencies": {
+    "@fastify/cookie": "^9.3.1",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "knex": "^3.1.0",
