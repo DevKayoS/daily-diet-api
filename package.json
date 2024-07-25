@@ -14,6 +14,7 @@
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.12",
     "@types/supertest": "^6.0.2",
     "eslint": "^8.57.0",
@@ -28,6 +29,7 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "pg": "^8.12.0",
     "zod": "^3.23.8"
