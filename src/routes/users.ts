@@ -24,6 +24,11 @@ export async function userRoutes(app: FastifyInstance) {
       request.body,
     )
 
+    const user = await knex('users').where({ email })
+
+    if (user) {
+      return reply.status(404).send({ message: 'This account already existis' })
+    }
     // criando senha criptografada
     const salt = await bcrypt.genSalt(8)
     const passwordHash = await bcrypt.hash(password, salt)
