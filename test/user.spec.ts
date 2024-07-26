@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { app } from '../src/app'
 import { it, describe, beforeAll, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
-import { execSync } from 'node:child_process'
+import { execSync } from 'child_process'
 
 describe('User Routes', () => {
   // esperando o servidor rodar
@@ -13,11 +14,9 @@ describe('User Routes', () => {
     await app.close()
   })
 
-  beforeEach(async () => {
-    // resetando o banco de dados antes de iniciar o teste
-    execSync('npm run knex -- migrate:rollback')
-    // criando um banco de dados antes de rodar o proximo teste
-    execSync('npm run knex -- migrate:latest')
+  beforeEach(() => {
+    execSync('npm run knex migrate:rollback --all')
+    execSync('npm run knex migrate:latest')
   })
   // deveria ser possivel criar novo usuario
   it('should be able to create new user', async () => {
@@ -50,3 +49,5 @@ describe('User Routes', () => {
       .expect(200)
   })
 })
+
+
