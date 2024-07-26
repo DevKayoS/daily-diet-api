@@ -79,4 +79,13 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     return reply.status(204).send({ message: 'Deleted meal' })
   })
+
+  // listando todas as refeicoes do usuario
+  app.get('/list', async (request, reply) => {
+    const user = await getUserByToken(request, reply)
+
+    const userMeals = await knex('meals').where('user_id', user.id)
+
+    return reply.status(200).send({ userMeals })
+  })
 }
