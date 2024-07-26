@@ -24,7 +24,7 @@ export async function userRoutes(app: FastifyInstance) {
       request.body,
     )
 
-    const user = await knex('users').where({ email })
+    const user = await knex('users').where({ email }).first()
 
     if (user) {
       return reply.status(404).send({ message: 'This account already existis' })

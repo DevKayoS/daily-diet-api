@@ -74,7 +74,7 @@ export async function mealsRoutes(app: FastifyInstance) {
   app.delete('/:id', async (request, reply) => {
     const { id } = getRoutesParams.parse(request.params)
     const user = await getUserByToken(request, reply)
-
+    // deletando do banco a refeicao pelo id
     await knex('meals').where({ id, user_id: user.id }).delete()
 
     return reply.status(204).send({ message: 'Deleted meal' })
@@ -83,9 +83,24 @@ export async function mealsRoutes(app: FastifyInstance) {
   // listando todas as refeicoes do usuario
   app.get('/list', async (request, reply) => {
     const user = await getUserByToken(request, reply)
-
+    // pegando todas as refeicoes do usuario
     const userMeals = await knex('meals').where('user_id', user.id)
-
+    if (!userMeals) {
+      return reply
+        .status(404)
+        .send({ message: 'There are no meals  registered yet' })
+    }
     return reply.status(200).send({ userMeals })
+  })
+
+  // pegando uma unica refeicao
+  app.get('/:id', async (request, reply) => {
+    const { id } = getRoutesParams.parse(request.params)
+
+    const user = await getUserByToken(request, reply)
+
+    const meal = await knex('meals').where({ id, user_id: user.id }).first()
+
+    return reply.status(200).send({ meal })
   })
 }
