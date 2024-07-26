@@ -3,13 +3,14 @@ import { FastifyInstance } from 'fastify'
 import { checkTokenExists } from '../middleware/check-token-exists'
 import { z } from 'zod'
 import { getUserByToken } from '../middleware/get-user-by-token'
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'node:crypto'
 import { knex } from '../database'
-import { request } from 'http'
+import { getRoutesParams } from '../utils/get-routes-params'
 
 export async function mealsRoutes(app: FastifyInstance) {
   // verificando se existe um token
   app.addHook('preHandler', checkTokenExists)
+  // criando nova refeicao
   app.post('/', async (request, reply) => {
     const createMealSchema = z.object({
       name: z.string(),
@@ -45,20 +46,37 @@ export async function mealsRoutes(app: FastifyInstance) {
       date_time: z.string(),
       enter_diet: z.boolean(),
     })
-    const id = request.params
-
+    // pegando o id pelos parametros da requisicao
+    const { id } = getRoutesParams.parse(request.params)
     const { name, description, date_time, enter_diet } = updateMealSchema.parse(
       request.body,
     )
-    if (!name || !description || !date_time || !enter_diet) {
-      return reply.status(404).send({ message: 'have components missing' })
-    }
-
-    const meal = await knex('meals').where('id', id)
-
+    const meal = await knex('meals').where('id', id).first()
+    // validando se a refeicao existe mesmo
     if (!meal) {
       return reply.status(404).send({ message: 'meal not found' })
     }
-    console.log(meal)
+
+    const updatedMeal = {
+      name,
+      description,
+      date_time,
+      enter_diet,
+    }
+    const user = await getUserByToken(request, reply)
+
+    await knex('meals').where({ id, user_id: user.id }).update(updatedMeal)
+
+    return reply.status(201).send(meal)
+  })
+
+  // deletando refeicao
+  app.delete('/:id', async (request, reply) => {
+    const { id } = getRoutesParams.parse(request.params)
+    const user = await getUserByToken(request, reply)
+
+    await knex('meals').where({ id, user_id: user.id }).delete()
+
+    return reply.status(204).send({ message: 'Deleted meal' })
   })
 }
