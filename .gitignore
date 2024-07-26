@@ -6,3 +6,4 @@ node_modules
 
 # enviroment
 .env
+.env.test
