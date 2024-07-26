@@ -21,7 +21,7 @@ export async function mealsRoutes(app: FastifyInstance) {
     const { name, description, date_time, enter_diet } = createMealSchema.parse(
       request.body,
     )
-    if (!name || !description || !date_time || !enter_diet) {
+    if (!name || !description || !date_time) {
       return reply.status(404).send({ message: 'have components missing' })
     }
     const user = await getUserByToken(request, reply)
@@ -102,5 +102,46 @@ export async function mealsRoutes(app: FastifyInstance) {
     const meal = await knex('meals').where({ id, user_id: user.id }).first()
 
     return reply.status(200).send({ meal })
+  })
+
+  // fazendo as metricas
+  app.get('/metrics', async (request, reply) => {
+    const user = await getUserByToken(request, reply)
+
+    const meals = await knex('meals').where('user_id', user.id)
+    const goodMeals = await knex('meals').where({
+      user_id: user.id,
+      enter_diet: true,
+    })
+    const badMeals = await knex('meals').where({
+      user_id: user.id,
+      enter_diet: false,
+    })
+
+    const totalMeals = meals.length
+    const totalGoodMeals = goodMeals.length
+    const totalBadMeals = badMeals.length
+
+    // fazendo a contagem da melhor sequencia de dieta
+    let bestSequence = 0
+    let currentSequence = 0
+
+    meals.forEach((meal) => {
+      if (meal.enter_diet) {
+        currentSequence++
+        if (currentSequence > bestSequence) {
+          bestSequence = currentSequence
+        }
+      } else {
+        currentSequence = 0
+      }
+    })
+
+    return reply.send({
+      totalMeals,
+      totalGoodMeals,
+      totalBadMeals,
+      bestSequence,
+    })
   })
 }
