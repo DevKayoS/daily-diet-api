@@ -19,4 +19,7 @@
     - [X] Quantidade total de refeições dentro da dieta
     - [X] Quantidade total de refeições fora da dieta
     - [X] Melhor sequência de refeições dentro da dieta
-- [X] O usuário só pode visualizar, editar e apagar as refeições o qual ele criou
+- [X] O usuário só pode visualizar, editar e apagar as refeições o qual ele criouw
+
+
+aa
